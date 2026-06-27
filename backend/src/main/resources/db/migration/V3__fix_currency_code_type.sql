@@ -1,0 +1,1 @@
+ALTER TABLE building ALTER COLUMN currency_code TYPE VARCHAR(3);
