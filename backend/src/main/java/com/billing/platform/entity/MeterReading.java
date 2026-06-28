@@ -19,6 +19,10 @@ public class MeterReading {
     @Column(name = "master_meter_id")
     private Long masterMeterId;
 
+
+    @Column(name = "import_batch_id")
+    private Long importBatchId;
+
     @Column(name = "reading_date", nullable = false)
     private LocalDate readingDate;
 
@@ -42,6 +46,14 @@ public class MeterReading {
     public Long getMasterMeterId() { return masterMeterId; }
     public void setMasterMeterId(Long masterMeterId) { this.masterMeterId = masterMeterId; }
 
+    public Long getImportBatchId() {
+        return importBatchId;
+    }
+
+    public void setImportBatchId(Long importBatchId) {
+        this.importBatchId = importBatchId;
+    }
+    
     public LocalDate getReadingDate() { return readingDate; }
     public void setReadingDate(LocalDate readingDate) { this.readingDate = readingDate; }
 
