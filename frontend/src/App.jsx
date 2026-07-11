@@ -22,31 +22,26 @@ export default function App() {
               <DashboardPage />
             </ProtectedRoute>
           } />
-
           <Route path="/buildings" element={
             <ProtectedRoute allowedRoles={['ADMIN', 'OWNER']}>
               <BuildingsPage />
             </ProtectedRoute>
           } />
-
           <Route path="/import" element={
             <ProtectedRoute allowedRoles={['ADMIN', 'OWNER']}>
               <ImportPage />
             </ProtectedRoute>
           } />
-
           <Route path="/billing" element={
             <ProtectedRoute allowedRoles={['ADMIN', 'OWNER']}>
               <BillingPage />
             </ProtectedRoute>
           } />
-
           <Route path="/payments" element={
             <ProtectedRoute allowedRoles={['ADMIN', 'OWNER']}>
               <PaymentsPage />
             </ProtectedRoute>
           } />
-
           <Route path="/tenant-portal" element={
             <ProtectedRoute allowedRoles={['TENANT', 'OWNER', 'ADMIN']}>
               <TenantPortalPage />

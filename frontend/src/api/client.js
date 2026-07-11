@@ -4,7 +4,6 @@ const apiClient = axios.create({
   baseURL: '/api',
 })
 
-// Attach JWT token to every request automatically
 apiClient.interceptors.request.use((config) => {
   const token = localStorage.getItem('token')
   if (token) {
@@ -13,7 +12,6 @@ apiClient.interceptors.request.use((config) => {
   return config
 })
 
-// If any response is 401, redirect to login
 apiClient.interceptors.response.use(
   (response) => response,
   (error) => {

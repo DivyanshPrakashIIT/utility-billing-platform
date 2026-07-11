@@ -14,31 +14,28 @@ export default function ImportPage() {
     setLoading(true)
     setResult(null)
     setErrors([])
-
     const formData = new FormData()
     formData.append('file', file)
-
     try {
       const res = await apiClient.post('/import/batches', formData, {
-        headers: { 'Content-Type': 'multipart/form-data' }
+        headers: { 'Content-Type': 'multipart/form-data' },
       })
       setResult(res.data)
-
       if (res.data.failedRows > 0) {
         const errRes = await apiClient.get(`/import/batches/${res.data.id}/errors`)
         setErrors(errRes.data)
       }
     } catch {
-      setResult({ status: 'FAILED', errorMessage: 'Upload failed' })
+      setResult({ status: 'FAILED', totalRows: 0, successRows: 0, failedRows: 0 })
     } finally {
       setLoading(false)
     }
   }
 
   const statusColor = {
-    COMPLETED: 'text-green-600',
-    PARTIALLY_FAILED: 'text-orange-600',
-    FAILED: 'text-red-600',
+    COMPLETED: 'text-green-600 bg-green-50',
+    PARTIALLY_FAILED: 'text-orange-600 bg-orange-50',
+    FAILED: 'text-red-600 bg-red-50',
   }
 
   return (
@@ -50,14 +47,15 @@ export default function ImportPage() {
         </button>
       </nav>
 
-      <div className="max-w-3xl mx-auto p-6">
-        <h2 className="text-2xl font-bold text-gray-800 mb-6">Import Meter Readings</h2>
+      <div className="max-w-3xl mx-auto p-6 space-y-6">
+        <h2 className="text-2xl font-bold text-gray-800">Import Meter Readings</h2>
 
-        <div className="bg-white rounded-lg shadow p-6 mb-6">
-          <p className="text-sm text-gray-500 mb-4">
-            Upload a CSV file with columns: <code className="bg-gray-100 px-1 rounded">meter_type, meter_id, reading_date, reading_value</code>
-          </p>
-          <div className="flex gap-4 items-center">
+        <div className="bg-white rounded-xl shadow p-6">
+          <p className="text-sm text-gray-500 mb-1 font-medium">Required CSV format:</p>
+          <code className="text-xs bg-gray-100 px-3 py-1 rounded block mb-4">
+            meter_type, meter_id, reading_date, reading_value
+          </code>
+          <div className="flex gap-4 items-center flex-wrap">
             <input
               type="file"
               accept=".csv"
@@ -67,7 +65,7 @@ export default function ImportPage() {
             <button
               onClick={handleUpload}
               disabled={!file || loading}
-              className="bg-green-600 text-white px-6 py-2 rounded hover:bg-green-700 transition disabled:opacity-50 text-sm"
+              className="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition disabled:opacity-50 text-sm"
             >
               {loading ? 'Uploading...' : 'Upload CSV'}
             </button>
@@ -75,30 +73,36 @@ export default function ImportPage() {
         </div>
 
         {result && (
-          <div className="bg-white rounded-lg shadow p-6 mb-6">
+          <div className="bg-white rounded-xl shadow p-6">
             <h3 className="text-lg font-semibold mb-3">Import Result</h3>
-            <div className="grid grid-cols-2 gap-4 text-sm">
-              <div>
-                <span className="text-gray-500">Status:</span>{' '}
-                <span className={`font-semibold ${statusColor[result.status] || 'text-gray-700'}`}>
-                  {result.status}
-                </span>
+            <div className={`inline-block px-3 py-1 rounded-full text-sm font-medium mb-4 ${statusColor[result.status]}`}>
+              {result.status}
+            </div>
+            <div className="grid grid-cols-3 gap-4 text-sm">
+              <div className="bg-gray-50 rounded-lg p-3 text-center">
+                <div className="text-2xl font-bold text-gray-700">{result.totalRows}</div>
+                <div className="text-gray-500">Total Rows</div>
               </div>
-              <div><span className="text-gray-500">Total Rows:</span> {result.totalRows}</div>
-              <div><span className="text-gray-500">Success:</span> <span className="text-green-600 font-medium">{result.successRows}</span></div>
-              <div><span className="text-gray-500">Failed:</span> <span className="text-red-600 font-medium">{result.failedRows}</span></div>
+              <div className="bg-green-50 rounded-lg p-3 text-center">
+                <div className="text-2xl font-bold text-green-600">{result.successRows}</div>
+                <div className="text-gray-500">Successful</div>
+              </div>
+              <div className="bg-red-50 rounded-lg p-3 text-center">
+                <div className="text-2xl font-bold text-red-600">{result.failedRows}</div>
+                <div className="text-gray-500">Failed</div>
+              </div>
             </div>
           </div>
         )}
 
         {errors.length > 0 && (
-          <div className="bg-white rounded-lg shadow p-6">
-            <h3 className="text-lg font-semibold mb-3 text-red-600">Errors</h3>
+          <div className="bg-white rounded-xl shadow p-6">
+            <h3 className="text-lg font-semibold mb-3 text-red-600">Row Errors</h3>
             <div className="space-y-2">
               {errors.map((err) => (
-                <div key={err.id} className="bg-red-50 border border-red-200 rounded px-4 py-2 text-sm">
+                <div key={err.id} className="bg-red-50 border border-red-200 rounded-lg px-4 py-2 text-sm">
                   <span className="font-medium">Row {err.rowNumber}</span>
-                  {err.fieldName && <span className="text-gray-500"> ({err.fieldName})</span>}
+                  {err.fieldName && <span className="text-gray-500"> — {err.fieldName}</span>}
                   : {err.errorMessage}
                 </div>
               ))}
