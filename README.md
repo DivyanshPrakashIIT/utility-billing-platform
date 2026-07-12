@@ -105,3 +105,32 @@ React SPA → Spring Boot REST API → PostgreSQL
 - `main` — production-ready code
 - Feature branches for new work
 - Conventional commits: `feat:`, `fix:`, `chore:`, `docs:`
+
+- ## How to Run This Project
+
+### Option 1 — Docker (Recommended, 5 minutes)
+Requirements: Docker Desktop only
+
+```bash
+git clone https://github.com/DivyanshPrakashIIT/utility-billing-platform.git
+cd utility-billing-platform
+docker compose up -d
+```
+
+Open http://localhost:3000 — Login: admin / admin123
+
+### Option 2 — Local Development
+Requirements: Java 17, Node.js 20, Docker Desktop
+
+```bash
+# Start database
+docker compose up -d postgres
+
+# Start backend (terminal 1)
+cd backend && ./mvnw spring-boot:run
+
+# Start frontend (terminal 2)  
+cd frontend && npm install && npm run dev
+```
+
+Open http://localhost:5173
